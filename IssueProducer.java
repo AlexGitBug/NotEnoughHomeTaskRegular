@@ -19,54 +19,42 @@ import java.util.stream.Collectors;
  */
     public class IssueProducer implements Runnable {
 
-        Path pathReader = Path.of("resources", "log-file-Complaint.csv");
-        private Queue<Issue> queue;
-        private List<Issue> list;
+    Path pathReader = Path.of("resources", "log-file-Complaint.csv");
+    private Queue<Issue> queue;
+    private List<Issue> list;
 
-        public IssueProducer(Queue<Issue> queue, List<Issue> list) {
-            this.queue = queue;
-            this.list = list;
-        }
+    public IssueProducer(Queue<Issue> queue, List<Issue> list) {
+        this.queue = queue;
+        this.list = list;
+    }
 
-        @Override
-        public void run() {
-            while (true) {
+    @Override
+    public void run() {
+        while (true) {
             synchronized (queue) {
-                    try {
-                        if (IssuesTxtUtil.read(pathReader).isEmpty()) {
-                            break;
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("В очередь добавилась проблема");
-                    try {
-                        queue.offer(IssuesTxtUtil.read(pathReader).get(0));
-                        } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        queue.wait(1000);
-
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("В очередь добавилась еще одна жалоба");
+                if (IssuesTxtUtil.read(pathReader).isEmpty()) {
+                    break;
+                }
+                System.out.println("В очередь добавилась проблема");
+                queue.offer(IssuesTxtUtil.read(pathReader).get(0));
                 try {
-                    IssuesTxtUtil.writeNewIssue(pathReader);
-                    System.out.println("Ожидаем считывание жалобы");
-                    queue.offer(IssuesTxtUtil.read(pathReader).get(0));
-                    System.out.println("Жалоба считалась и передана диспетчерам");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    queue.wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("В очередь добавилась еще одна жалоба");
+                IssuesTxtUtil.writeNewIssue(pathReader);
+                System.out.println("Ожидаем считывание жалобы");
+                queue.offer(IssuesTxtUtil.read(pathReader).get(0));
+                System.out.println("Жалоба считалась и передана диспетчерам");
                 try {
                     queue.wait(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                System.out.println("В очередь добавилась еще одна жалоба");
             }
 
-            }
         }
     }
+}

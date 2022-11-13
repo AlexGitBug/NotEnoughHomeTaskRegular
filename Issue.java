@@ -8,6 +8,7 @@ package Pattern.HomeTask;
  * - Текст жалобы
  */
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -22,6 +23,8 @@ public class Issue {
 
     private String text;
 
+    Path pathWriter = Path.of("resources", "log-file-Solutions.csv");
+    Path pathReader = Path.of("resources", "log-file-Complaint.csv");
 
     public Issue(int id, String time, String fullName, String phoneNumber, String text) {
         this.id = id;

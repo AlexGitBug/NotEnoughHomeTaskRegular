@@ -19,11 +19,12 @@ public class Yrunner {
         Path pathReader = Path.of("resources", "log-file-Complaint.csv");
         Path pathWriter = Path.of("resources", "log-file-Solutions.csv");
 
-
         Thread producer = new Thread(new IssueProducer(issue, list));
-        Thread consumer = new Thread(new IssueConsumer(issue, list));
+        Thread consumer = new Thread(new IssueConsumer(issue, list, "диспетчер 1"));
+        Thread consumer2 = new Thread(new IssueConsumer2(issue, list, "диспетчер 2"));
 
         producer.start();
         consumer.start();
+        consumer2.start();
     }
 }
